@@ -1,0 +1,49 @@
+package botservice
+
+import (
+	"strings"
+	"time"
+)
+
+type Reciever interface {
+	Recieve() (int, string)
+}
+
+type Sender interface {
+	Send(id int, txt string)
+}
+
+type Dispatcher interface {
+	Reciever
+	Sender
+}
+
+type BotService struct {
+	ChatID int
+	Text   string
+}
+
+func New() *BotService {
+	return &BotService{}
+}
+
+func (p *BotService) Serve(rec Reciever, dis Dispatcher) {
+
+	for {
+		var text string
+
+		p.ChatID, p.Text = Dispatcher.Recieve(dis)
+		if p.Text != "" && strings.HasPrefix(p.Text, "/") {
+			command := strings.Split(p.Text, " ")[0]
+
+			switch command {
+			case "/start":
+				text = "Greetings!"
+			case "/getfact":
+				_, text = Reciever.Recieve(rec)
+			}
+			Dispatcher.Send(dis, p.ChatID, text)
+		}
+		time.Sleep(time.Second)
+	}
+}
