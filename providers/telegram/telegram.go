@@ -22,7 +22,7 @@ type Update struct {
 
 type Message struct {
 	Chat struct {
-		ID int `json:"id"`
+		ID int64 `json:"id"`
 	} `json:"chat"`
 	Text string `json:"text"`
 }
@@ -54,13 +54,13 @@ func (p *TelegramProvider) updates() ([]Update, error) {
 	return result.Result, nil
 }
 
-func (p *TelegramProvider) sendMessage(chatID int, text string) error {
+func (p *TelegramProvider) sendMessage(chatID int64, text string) error {
 	url := fmt.Sprintf("%ssendMessage?chat_id=%d&text=%s", (p.host + "bot" + p.botAPI + "/"), chatID, url.QueryEscape(text))
 	_, err := http.Get(url)
 	return err
 }
 
-func (p *TelegramProvider) Recieve() (int, string) {
+func (p *TelegramProvider) Recieve() (int64, string) {
 	for {
 		updates, err := p.updates()
 		if err != nil {
@@ -74,6 +74,6 @@ func (p *TelegramProvider) Recieve() (int, string) {
 
 }
 
-func (p *TelegramProvider) Send(chatID int, txt string) {
+func (p *TelegramProvider) Send(chatID int64, txt string) {
 	p.sendMessage(chatID, txt)
 }

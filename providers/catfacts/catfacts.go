@@ -38,7 +38,7 @@ func (p *FactProvider) getFact(factURL string) string {
 	return result.Result
 }
 
-func (p *FactProvider) Recieve() (int, string) {
+func (p *FactProvider) Recieve() (int64, string) {
 	var s string = p.getFact(factsURL)
 	return 0, s
 }

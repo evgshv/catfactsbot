@@ -6,11 +6,11 @@ import (
 )
 
 type Reciever interface {
-	Recieve() (int, string)
+	Recieve() (int64, string)
 }
 
 type Sender interface {
-	Send(id int, txt string)
+	Send(id int64, txt string)
 }
 
 type Dispatcher interface {
@@ -19,7 +19,7 @@ type Dispatcher interface {
 }
 
 type BotService struct {
-	ChatID int
+	ChatID int64
 	Text   string
 }
 
