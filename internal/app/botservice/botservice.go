@@ -3,6 +3,7 @@ package botservice
 import (
 	"net/http"
 	"strings"
+	"time"
 )
 
 type Reciever interface {
@@ -46,6 +47,6 @@ func (p *BotService) Serve(rec Reciever, dis Dispatcher, client http.Client) {
 				Dispatcher.Send(dis, p.ChatID, text, client)
 			}
 		}
-		//time.Sleep(time.Second)
+		time.Sleep(1 * time.Second)
 	}
 }
