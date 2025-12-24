@@ -31,9 +31,9 @@ func New(host string, botAPI string, offset int) *TelegramProvider {
 	return &TelegramProvider{ProviderID: "telegram", host: host, botAPI: botAPI, offset: offset}
 }
 
-func (p *TelegramProvider) updates() ([]Update, error) {
+func (p *TelegramProvider) updates(client http.Client) ([]Update, error) {
 	url := fmt.Sprintf("%sgetUpdates?timeout=60&offset=%d", (p.host + "bot" + p.botAPI + "/"), p.offset)
-	resp, err := http.Get(url)
+	resp, err := client.Get(url)
 	if err != nil {
 		return nil, err
 	}
@@ -54,15 +54,15 @@ func (p *TelegramProvider) updates() ([]Update, error) {
 	return result.Result, nil
 }
 
-func (p *TelegramProvider) sendMessage(chatID int64, text string) error {
+func (p *TelegramProvider) sendMessage(chatID int64, text string, client http.Client) error {
 	url := fmt.Sprintf("%ssendMessage?chat_id=%d&text=%s", (p.host + "bot" + p.botAPI + "/"), chatID, url.QueryEscape(text))
-	_, err := http.Get(url)
+	_, err := client.Get(url)
 	return err
 }
 
-func (p *TelegramProvider) Recieve() (int64, string) {
+func (p *TelegramProvider) Recieve(client http.Client) (int64, string) {
 	for {
-		updates, err := p.updates()
+		updates, err := p.updates(client)
 		if err != nil {
 			continue
 		}
@@ -74,6 +74,6 @@ func (p *TelegramProvider) Recieve() (int64, string) {
 
 }
 
-func (p *TelegramProvider) Send(chatID int64, txt string) {
-	p.sendMessage(chatID, txt)
+func (p *TelegramProvider) Send(chatID int64, txt string, client http.Client) {
+	p.sendMessage(chatID, txt, client)
 }

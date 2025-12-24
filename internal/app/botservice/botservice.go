@@ -1,16 +1,16 @@
 package botservice
 
 import (
+	"net/http"
 	"strings"
-	"time"
 )
 
 type Reciever interface {
-	Recieve() (int64, string)
+	Recieve(client http.Client) (int64, string)
 }
 
 type Sender interface {
-	Send(id int64, txt string)
+	Send(id int64, txt string, client http.Client)
 }
 
 type Dispatcher interface {
@@ -27,12 +27,12 @@ func New() *BotService {
 	return &BotService{}
 }
 
-func (p *BotService) Serve(rec Reciever, dis Dispatcher) {
+func (p *BotService) Serve(rec Reciever, dis Dispatcher, client http.Client) {
 
 	for {
 		var text string
 
-		p.ChatID, p.Text = Dispatcher.Recieve(dis)
+		p.ChatID, p.Text = Dispatcher.Recieve(dis, client)
 		if p.Text != "" && strings.HasPrefix(p.Text, "/") {
 			command := strings.Split(p.Text, " ")[0]
 
@@ -40,10 +40,12 @@ func (p *BotService) Serve(rec Reciever, dis Dispatcher) {
 			case "/start":
 				text = "Greetings!"
 			case "/getfact":
-				_, text = Reciever.Recieve(rec)
+				_, text = Reciever.Recieve(rec, client)
 			}
-			Dispatcher.Send(dis, p.ChatID, text)
+			if len(text) != 0 {
+				Dispatcher.Send(dis, p.ChatID, text, client)
+			}
 		}
-		time.Sleep(time.Second)
+		//time.Sleep(time.Second)
 	}
 }
